@@ -1,0 +1,52 @@
+[project]
+name = "seo-tools"
+version = "0.1.0"
+description = "A suite of SEO tools, including automation for Google Sheets and keyword clustering features (coming soon)."
+readme = "README.md"
+authors = [
+    { name = "ilarionkuleshov", email = "ilarion.kuleshov@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "gspread>=6.2.0",
+    "gspread-formatting>=1.2.1",
+    "streamlit>=1.45.0",
+]
+
+[dependency-groups]
+dev = [
+    "autoflake>=2.3.1",
+    "black>=25.1.0",
+    "flake8>=7.2.0",
+    "flake8-pyproject>=1.2.3",
+    "isort>=6.0.1",
+    "mypy>=1.15.0",
+    "pandas-stubs>=2.2.3.250308",
+    "pylint>=3.3.7",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.autoflake]
+remove-all-unused-imports = true
+recursive = true
+remove-unused-variables = true
+ignore-init-module-imports = true
+in-place = true
+
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+max-line-length = 120
+per-file-ignores = "__init__.py:F401"
+
+[tool.pylint]
+max-line-length = 120
+
+[[tool.mypy.overrides]]
+module = [
+    "gspread_formatting.*",
+]
+ignore_missing_imports = true
