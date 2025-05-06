@@ -81,6 +81,7 @@ def generate_color_groups(df: pd.DataFrame) -> dict[str, list[int]]:
     for idx, row in df.iterrows():
         color = group_colors[row[group_column]]
         idx = cast(int, idx)
+        # Add 2 to the index to account for the header row and 1-based indexing in Google Sheets.
         color_groups[color].append(idx + 2)
 
     return color_groups
