@@ -136,7 +136,7 @@ def apply_formatting(
 def show_example() -> None:
     """Shows example of result."""
     st.write("This is an example of how the rows will be highlighted based on the values in `Metric` column.")
-    st.image("images/example_gsheet_highlight_rows.png")
+    st.image("src/images/example_gsheet_highlight_rows.png")
 
 
 @st.dialog("How to get Google Sheets credentials")
