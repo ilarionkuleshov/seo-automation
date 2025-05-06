@@ -14,28 +14,29 @@ from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 def format_sheet() -> None:
     """Formats a Google Sheets document by highlighting rows based on a specific column's values."""
-    with st.status("Extracting data...", expanded=True) as status:
+    with st.status("In progress...", expanded=True) as status:
         try:
+            current_stage = "Data extraction"
             worksheet = get_worksheet()
             df = pd.DataFrame(worksheet.get_all_records())
-            st.write("Data extracted")
+            st.badge(current_stage, color="green", icon=":material/check:")
 
-            status.update(label="Grouping data and generating colors...")
+            current_stage = "Data grouping and color generation"
             color_groups = generate_color_groups(df)
-            st.write("Data grouped and colors generated")
+            st.badge(current_stage, color="green", icon=":material/check:")
 
-            status.update(label="Generating color ranges...")
-            max_column_letter = chr(ord("A") + worksheet.col_count - 1)
-            color_ranges = generate_color_ranges(color_groups, max_column_letter)
-            st.write("Color ranges generated")
+            current_stage = "Range generation"
+            color_ranges = generate_color_ranges(color_groups)
+            st.badge(current_stage, color="green", icon=":material/check:")
 
-            status.update(label="Applying formatting...")
+            current_stage = "Applying formatting"
             apply_formatting(worksheet, color_ranges)
-            st.write("Formatting applied")
+            st.badge(current_stage, color="green", icon=":material/check:")
 
-            status.update(label="Formatting completed successfully!", state="complete", expanded=False)
+            status.update(label="Formatting completed successfully!", expanded=False)
         except Exception:
-            status.update(label="An error occurred while processing the sheet.", state="error", expanded=False)
+            st.badge(current_stage, color="red", icon=":material/close:")
+            status.update(label="An error occurred during formatting.")
             raise
 
 
@@ -85,14 +86,11 @@ def generate_color_groups(df: pd.DataFrame) -> dict[str, list[int]]:
     return color_groups
 
 
-def generate_color_ranges(
-    color_groups: dict[str, list[int]], max_column_letter: str
-) -> list[tuple[str, gspread_formatting.CellFormat]]:
+def generate_color_ranges(color_groups: dict[str, list[int]]) -> list[tuple[str, gspread_formatting.CellFormat]]:
     """Generates color ranges for batch updating in Google Sheets.
 
     Args:
         color_groups (dict[str, list[int]]): Groups of colors and their corresponding row indices.
-        max_column_letter (str): The letter of the last column in the worksheet.
 
     Returns:
         list[tuple[str, gspread_formatting.CellFormat]]: A list of tuples where each tuple
@@ -110,11 +108,11 @@ def generate_color_ranges(
             if current_row == end_row + 1:
                 end_row = current_row
             else:
-                color_ranges.append((f"A{start_row}:{max_column_letter}{end_row}", cell_format))
+                color_ranges.append((f"{start_row}:{end_row}", cell_format))
                 start_row = current_row
                 end_row = current_row
 
-        color_ranges.append((f"A{start_row}:{max_column_letter}{end_row}", cell_format))
+        color_ranges.append((f"{start_row}:{end_row}", cell_format))
 
     return color_ranges
 
@@ -130,8 +128,7 @@ def apply_formatting(
 
     """
     with gspread_formatting.batch_updater(worksheet.spreadsheet) as batch:
-        for cell_range, cell_format in color_ranges:
-            batch.format_cell_range(worksheet, cell_range, cell_format)  # pylint: disable=E1101
+        batch.format_cell_ranges(worksheet, color_ranges)  # pylint: disable=E1101
 
 
 @st.dialog("Example of result")
