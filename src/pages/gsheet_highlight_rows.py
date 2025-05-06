@@ -184,19 +184,16 @@ if __name__ == "__main__":
         st.text_input(
             "Document URL",
             help="The URL of the Google Sheets document you want to format. Make sure you have edit access.",
-            placeholder="https://docs.google.com/spreadsheets/d/...",
             key="document_url",
         )
         st.text_input(
             "Worksheet name",
             help="The name of the worksheet you want to format. This is the tab name at the bottom of the sheet.",
-            placeholder="e.g. Sheet1",
             key="worksheet_name",
         )
         st.text_input(
             "Group column",
             help="The name of the column you want to group by. This column will determine the colors of the rows.",
-            placeholder="e.g. Metric",
             key="group_column",
         )
         submitted = st.form_submit_button("Format", type="primary")
