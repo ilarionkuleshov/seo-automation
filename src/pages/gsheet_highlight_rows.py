@@ -34,8 +34,9 @@ def format_sheet() -> None:
             st.write("Formatting applied")
 
             status.update(label="Formatting completed successfully!", state="complete", expanded=False)
-        except Exception:  # pylint: disable=W0718
-            status.update(label="An error occurred while processing the sheet.", state="error")
+        except Exception:
+            status.update(label="An error occurred while processing the sheet.", state="error", expanded=False)
+            raise
 
 
 def get_worksheet() -> gspread.Worksheet:
