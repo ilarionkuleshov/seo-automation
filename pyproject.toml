@@ -44,6 +44,12 @@ per-file-ignores = "__init__.py:F401"
 
 [tool.pylint]
 max-line-length = 120
+init-hook = "import sys; sys.path.extend(['src']);"
+disable = "C0114"
+
+[tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
 
 [[tool.mypy.overrides]]
 module = [
