@@ -1,6 +1,6 @@
 import collections
 import random
-from typing import Callable, cast
+from typing import cast
 
 import gspread
 import gspread_formatting
@@ -38,48 +38,39 @@ def main() -> None:
         if not worksheet_func or not group_column:
             st.warning("Please fill in all fields.", icon="⚠️")
         else:
-            format_sheet(worksheet_func, group_column)
+            components.stage_status(
+                stages=[
+                    {
+                        "name": "Retrieving worksheet",
+                        "func": components.return_stage_context("worksheet")(worksheet_func),
+                    },
+                    {
+                        "name": "Data extraction",
+                        "func": get_dataframe,
+                    },
+                    {
+                        "name": "Data grouping and color generation",
+                        "func": generate_color_groups,
+                    },
+                    {"name": "Range generation", "func": generate_color_ranges},
+                    {"name": "Applying formatting", "func": apply_formatting},
+                ],
+                context={"group_column": group_column},
+            )
 
 
-def format_sheet(worksheet_func: Callable[[], gspread.Worksheet], group_column: str) -> None:
-    """Formats a Google Sheets document by highlighting rows based on a specific column's values.
+@components.return_stage_context("df")
+def get_dataframe(worksheet: gspread.Worksheet) -> pd.DataFrame:
+    """Returns a DataFrame from a Google Sheets worksheet.
 
     Args:
-        worksheet_func (Callable[[], gspread.Worksheet]): A function that returns a gspread Worksheet object.
-        group_column (str): The name of the column to group by. This column will determine the colors of the rows.
+        worksheet (gspread.Worksheet): The worksheet to get data from.
 
     """
-    with st.status("In progress...", expanded=True) as status:
-        try:
-            current_stage = "Data extraction"
-            worksheet = worksheet_func()
-            df = pd.DataFrame(worksheet.get_all_records())
-            st.badge(current_stage, color="green", icon=":material/check:")
-
-            current_stage = "Data grouping and color generation"
-            color_groups = generate_color_groups(df, group_column)
-            st.badge(current_stage, color="green", icon=":material/check:")
-
-            current_stage = "Range generation"
-            color_ranges = generate_color_ranges(color_groups)
-            st.badge(current_stage, color="green", icon=":material/check:")
-
-            current_stage = "Applying formatting"
-            apply_formatting(worksheet, color_ranges)
-            st.badge(current_stage, color="green", icon=":material/check:")
-
-            status.update(label="Formatting completed successfully!", expanded=False)
-        except Exception:
-            st.badge(current_stage, color="red", icon=":material/close:")
-            status.update(label="An error occurred during formatting.")
-            raise
+    return pd.DataFrame(worksheet.get_all_records())
 
 
-def get_random_color() -> str:
-    """Returns a random hex color code."""
-    return "#" + "".join(random.choice("89ABCDEF") for _ in range(6))
-
-
+@components.return_stage_context("color_groups")
 def generate_color_groups(df: pd.DataFrame, group_column: str) -> dict[str, list[int]]:
     """Groups data and generates unique colors for each group.
 
@@ -96,7 +87,7 @@ def generate_color_groups(df: pd.DataFrame, group_column: str) -> dict[str, list
 
     for group in df[group_column].unique():
         while True:
-            color = get_random_color()
+            color = "#" + "".join(random.choice("89ABCDEF") for _ in range(6))
             if color not in unique_colors:
                 unique_colors.add(color)
                 group_colors[group] = color
@@ -112,6 +103,7 @@ def generate_color_groups(df: pd.DataFrame, group_column: str) -> dict[str, list
     return color_groups
 
 
+@components.return_stage_context("color_ranges")
 def generate_color_ranges(color_groups: dict[str, list[int]]) -> list[tuple[str, gspread_formatting.CellFormat]]:
     """Generates color ranges for batch updating in Google Sheets.
 
