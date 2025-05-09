@@ -14,17 +14,11 @@ def main() -> None:
     """Displays page for highlighting rows in Google Sheets."""
     st.title("🎨 Google Sheets - Highlight Rows")
     st.write(
-        "This tool allows you to highlight rows in a Google Sheets document based on a specific column's values. "
+        "This tool allows you to highlight rows in a Google Sheets document based on the values of a specific column. "
         "You can use this to visually group data in your spreadsheet."
     )
     st.write("Please note that the colors are generated randomly, but each group will have its own unique color.")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.button("Example of result", icon="🖼", on_click=show_example, use_container_width=True)
-    with col2:
-        st.button(
-            "How to get Google Sheets credentials", icon="🔑", on_click=show_credentials_info, use_container_width=True
-        )
+    st.button("Example of result", icon="🖼", on_click=show_example, use_container_width=True)
 
     with st.form(key="gsheet_highlight_rows"):
         worksheet_func = components.gsheet_selector()
@@ -154,25 +148,6 @@ def show_example() -> None:
     """Shows example of result."""
     st.write("This is an example of how the rows will be highlighted based on the values in `Metric` column.")
     st.image("src/images/example_gsheet_highlight_rows.png")
-
-
-@st.dialog("How to get Google Sheets credentials")
-def show_credentials_info() -> None:
-    """Shows information on how to get credentials."""
-    st.write("To get the Google Sheets credentials, follow these steps:")
-    st.write(
-        "1. Go to the [Google Cloud Console](https://console.cloud.google.com/).\n"
-        "2. Create a new project or select an existing one.\n"
-        "3. Enable the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com) "
-        "for your project.\n"
-        "4. Go to the [Credentials page](https://console.cloud.google.com/apis/credentials) "
-        "and create service account credentials.\n"
-        "5. Download the JSON file and upload it here."
-    )
-    st.write(
-        "For more detailed instructions, see "
-        "[Google Cloud documentation](https://cloud.google.com/iam/docs/service-accounts-create)."
-    )
 
 
 if __name__ == "__main__":
