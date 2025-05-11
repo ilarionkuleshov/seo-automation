@@ -10,6 +10,8 @@ requires-python = ">=3.12"
 dependencies = [
     "gspread>=6.2.0",
     "gspread-formatting>=1.2.1",
+    "langcodes>=3.5.0",
+    "langdetect>=1.0.9",
     "streamlit>=1.45.0",
 ]
 
@@ -54,5 +56,6 @@ explicit_package_bases = true
 [[tool.mypy.overrides]]
 module = [
     "gspread_formatting.*",
+    "langdetect.*",
 ]
 ignore_missing_imports = true

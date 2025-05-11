@@ -1,6 +1,6 @@
 import functools
 import inspect
-from typing import Any, Callable, TypedDict
+from typing import Any, Callable, Iterator, TypedDict
 
 import streamlit as st
 
@@ -65,3 +65,26 @@ def stage_status(stages: list[Stage], context: dict[str, Any] | None = None) -> 
             st.badge(stage["name"], color="red", icon=":material/close:")
             status.update(label="An error occurred.")
             raise
+
+
+def progress_status[T](
+    label: str, total: int, func: Callable[..., Iterator[T]], context: dict[str, Any] | None = None
+) -> Iterator[T]:
+    """Displays a progress bar for a given function.
+
+    Args:
+        label (str): The label to be displayed on the progress bar.
+        total (int): The total number of items to be processed.
+        func (Callable[..., Iterator[T]]): The function to be executed. It should yield items.
+        context (dict[str, Any] | None): A dictionary containing the context for the function. Defaults to None.
+
+    """
+    processed = 0
+    progress_bar = st.progress(value=0, text=label)
+
+    for item in func(**(context or {})):
+        yield item
+        processed += 1
+        progress_bar.progress(value=processed / total, text=f"{label} ({processed}/{total})")
+
+    progress_bar.empty()

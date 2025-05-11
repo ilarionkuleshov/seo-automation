@@ -8,11 +8,12 @@ import pandas as pd
 import streamlit as st
 
 import components
+import utils
 
 
 def main() -> None:
     """Displays page for highlighting rows in Google Sheets."""
-    st.title("🎨 Google Sheets - Highlight Rows")
+    st.title("🎨 Highlight Rows")
     st.write(
         "This tool allows you to highlight rows in a Google Sheets document based on the values of a specific column. "
         "You can use this to visually group data in your spreadsheet."
@@ -26,7 +27,7 @@ def main() -> None:
             "Group column",
             help="The name of the column you want to group by. This column will determine the colors of the rows.",
         )
-        submitted = st.form_submit_button("Format", type="primary")
+        submitted = st.form_submit_button("Highlight", type="primary")
 
     if submitted:
         if not worksheet_func or not group_column:
@@ -40,7 +41,7 @@ def main() -> None:
                     },
                     {
                         "name": "Data extraction",
-                        "func": get_dataframe,
+                        "func": components.return_stage_context("df")(utils.get_data_from_worksheet),
                     },
                     {
                         "name": "Data grouping and color generation",
@@ -49,19 +50,8 @@ def main() -> None:
                     {"name": "Range generation", "func": generate_color_ranges},
                     {"name": "Applying formatting", "func": apply_formatting},
                 ],
-                context={"group_column": group_column},
+                context={"group_column": group_column, "columns": [group_column]},
             )
-
-
-@components.return_stage_context("df")
-def get_dataframe(worksheet: gspread.Worksheet) -> pd.DataFrame:
-    """Returns a DataFrame from a Google Sheets worksheet.
-
-    Args:
-        worksheet (gspread.Worksheet): The worksheet to get data from.
-
-    """
-    return pd.DataFrame(worksheet.get_all_records())
 
 
 @components.return_stage_context("color_groups")

@@ -10,7 +10,7 @@ def main() -> None:
         "A suite of SEO tools, including automation for Google Sheets and keyword clustering features (coming soon)."
     )
 
-    st.subheader("Google Sheets Tools")
+    st.subheader("Google Sheets")
     components.card_grid(
         [
             {
