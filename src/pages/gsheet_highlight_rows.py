@@ -31,7 +31,7 @@ def main() -> None:
 
     if submitted:
         if not worksheet_func or not group_column:
-            st.warning("Please fill in all fields.", icon="⚠️")
+            st.warning("Please make sure you are logged in and have filled in all fields.", icon="⚠️")
         else:
             components.stage_status(
                 stages=[

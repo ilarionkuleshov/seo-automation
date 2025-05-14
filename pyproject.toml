@@ -8,11 +8,13 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "cryptography>=44.0.3",
     "gspread>=6.2.0",
     "gspread-formatting>=1.2.1",
     "langcodes>=3.5.0",
     "langdetect>=1.0.9",
     "streamlit>=1.45.0",
+    "streamlit-cookies-controller>=0.0.4",
 ]
 
 [dependency-groups]
@@ -25,6 +27,7 @@ dev = [
     "mypy>=1.15.0",
     "pandas-stubs>=2.2.3.250308",
     "pylint>=3.3.7",
+    "types-requests>=2.32.0.20250328",
 ]
 
 [tool.isort]
@@ -57,5 +60,7 @@ explicit_package_bases = true
 module = [
     "gspread_formatting.*",
     "langdetect.*",
+    "streamlit_cookies_controller.*",
+    "google_auth_oauthlib.*",
 ]
 ignore_missing_imports = true

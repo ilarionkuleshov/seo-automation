@@ -3,6 +3,7 @@ from typing import Callable
 
 import gspread
 import streamlit as st
+from google.oauth2.credentials import Credentials
 
 
 def gsheet_selector() -> Callable[[], gspread.Worksheet] | None:
@@ -13,11 +14,6 @@ def gsheet_selector() -> Callable[[], gspread.Worksheet] | None:
         None: If the user does not upload a credentials file.
 
     """
-    credentials_file = st.file_uploader(
-        "Upload your Google Sheets JSON credentials",
-        help="Your service account JSON file. If you don't have it, see the instructions on home page.",
-        type="json",
-    )
     document_url = st.text_input(
         "Document URL",
         help="The URL of the Google Sheets document. Make sure you have edit access.",
@@ -26,12 +22,19 @@ def gsheet_selector() -> Callable[[], gspread.Worksheet] | None:
         "Worksheet name",
         help="The name of the worksheet. This is the tab name at the bottom of the document.",
     )
-    if not credentials_file:
+    if not st.session_state["user"]:
         return None
 
     def get_worksheet() -> gspread.Worksheet:
-        credentials = json.loads(credentials_file.getvalue().decode("utf-8"))
-        client = gspread.service_account_from_dict(credentials)
+        google_oauth_client_config = json.loads(st.secrets["google_oauth_client_config"])
+        credentials = Credentials(
+            token=None,
+            refresh_token=st.session_state["user"]["refresh_token"],
+            token_uri=google_oauth_client_config["web"]["token_uri"],
+            client_id=google_oauth_client_config["web"]["client_id"],
+            client_secret=google_oauth_client_config["web"]["client_secret"],
+        )
+        client = gspread.Client(credentials)
         sheet = client.open_by_url(document_url)
         return sheet.worksheet(worksheet_name)
 

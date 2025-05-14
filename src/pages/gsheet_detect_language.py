@@ -16,7 +16,7 @@ def main() -> None:
     st.markdown(
         "This tool detects the language of the text in a Google Sheets column "
         "and saves the detected language to another column. "
-        "The detected language is saved as a string in the format `language_name (language_code)`."
+        "The detected language is saved as a string in the format `lang_name (lang_code)`."
     )
 
     with st.form(key="gsheet_detect_language"):
@@ -35,7 +35,7 @@ def main() -> None:
     # pylint: disable=R0801
     if submitted:
         if not worksheet_func or not source_column or not destination_column:
-            st.warning("Please fill in all fields.", icon="⚠️")
+            st.warning("Please make sure you are logged in and have filled in all fields.", icon="⚠️")
         else:
             components.stage_status(
                 stages=[
