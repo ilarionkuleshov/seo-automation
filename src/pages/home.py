@@ -14,7 +14,7 @@ def main() -> None:
     components.card_grid(
         [
             {
-                "image": "src/images/preview_gsheet_highlight_rows.svg",
+                "image": "src/images/previews/gsheet_highlight_rows.svg",
                 "page": "pages/gsheet_highlight_rows.py",
                 "label": "Highlight Rows",
                 "icon": "🎨",

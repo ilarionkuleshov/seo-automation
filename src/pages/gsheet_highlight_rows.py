@@ -21,7 +21,7 @@ def main() -> None:
     st.write("Please note that the colors are generated randomly, but each group will have its own unique color.")
     components.example_image(
         "This is an example of how the rows will be highlighted based on the values in `Metric` column.",
-        "src/images/example_gsheet_highlight_rows.png",
+        "src/images/examples/gsheet_highlight_rows.png",
     )
 
     with st.form(key="gsheet_highlight_rows"):

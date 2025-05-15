@@ -8,7 +8,7 @@ import auth
 
 def main() -> None:
     """Main function to run the Streamlit app."""
-    st.logo(image="src/images/logo.svg", icon_image="src/images/logo_icon.svg", size="large")
+    st.logo(image="src/images/logo/logo.svg", icon_image="src/images/logo/logo_icon.svg", size="large")
     setup_cookies()
     page = st.navigation(
         {

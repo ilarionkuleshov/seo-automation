@@ -18,6 +18,10 @@ def main() -> None:
         "and saves the detected language to another column. "
         "The detected language is saved as a string in the format `lang_name (lang_code)`."
     )
+    components.example_image(
+        "This example shows results of the language detection.",
+        "src/images/examples/gsheet_detect_language.png",
+    )
 
     with st.form(key="gsheet_detect_language"):
         worksheet_func = components.gsheet_selector()
