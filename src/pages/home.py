@@ -5,7 +5,7 @@ import components
 
 def main() -> None:
     """Displays the home page."""
-    st.title("SEO Tools")
+    st.title("SEO Automation")
     st.write(
         "A suite of SEO tools, including automation for Google Sheets and keyword clustering features (coming soon)."
     )
