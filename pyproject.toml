@@ -1,5 +1,5 @@
 [project]
-name = "seo-tools"
+name = "seo-automation"
 version = "0.1.0"
 description = "A suite of SEO tools, including automation for Google Sheets and keyword clustering features (coming soon)."
 readme = "README.md"
