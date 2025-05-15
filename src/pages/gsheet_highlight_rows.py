@@ -1,7 +1,4 @@
-"""Page for highlighting rows in Google Sheets."""
-
 import collections
-import json
 import random
 from typing import cast
 
@@ -9,57 +6,64 @@ import gspread
 import gspread_formatting
 import pandas as pd
 import streamlit as st
-from streamlit.runtime.uploaded_file_manager import UploadedFile
+
+import components
+import utils
 
 
-def format_sheet() -> None:
-    """Formats a Google Sheets document by highlighting rows based on a specific column's values."""
-    with st.status("In progress...", expanded=True) as status:
-        try:
-            current_stage = "Data extraction"
-            worksheet = get_worksheet()
-            df = pd.DataFrame(worksheet.get_all_records())
-            st.badge(current_stage, color="green", icon=":material/check:")
+def main() -> None:
+    """Displays page for highlighting rows in Google Sheets."""
+    st.title("🎨 Highlight Rows")
+    st.write(
+        "This tool allows you to highlight rows in a Google Sheets document based on the values of a specific column. "
+        "You can use this to visually group data in your spreadsheet."
+    )
+    st.write("Please note that the colors are generated randomly, but each group will have its own unique color.")
+    components.example_image(
+        "This is an example of how the rows will be highlighted based on the values in `Metric` column.",
+        "src/images/examples/gsheet_highlight_rows.png",
+    )
 
-            current_stage = "Data grouping and color generation"
-            color_groups = generate_color_groups(df)
-            st.badge(current_stage, color="green", icon=":material/check:")
+    with st.form(key="gsheet_highlight_rows"):
+        worksheet_func = components.gsheet_selector()
+        group_column = st.text_input(
+            "Group column",
+            help="The name of the column you want to group by. This column will determine the colors of the rows.",
+        )
+        submitted = st.form_submit_button("Highlight", type="primary")
 
-            current_stage = "Range generation"
-            color_ranges = generate_color_ranges(color_groups)
-            st.badge(current_stage, color="green", icon=":material/check:")
-
-            current_stage = "Applying formatting"
-            apply_formatting(worksheet, color_ranges)
-            st.badge(current_stage, color="green", icon=":material/check:")
-
-            status.update(label="Formatting completed successfully!", expanded=False)
-        except Exception:
-            st.badge(current_stage, color="red", icon=":material/close:")
-            status.update(label="An error occurred during formatting.")
-            raise
-
-
-def get_worksheet() -> gspread.Worksheet:
-    """Returns a gspread worksheet object based on the provided credentials and document URL."""
-    credentials_file: UploadedFile = st.session_state["credentials_file"]
-    credentials = json.loads(credentials_file.getvalue().decode("utf-8"))
-    client = gspread.service_account_from_dict(credentials)
-
-    sheet = client.open_by_url(st.session_state["document_url"])
-    return sheet.worksheet(st.session_state["worksheet_name"])
-
-
-def get_random_color() -> str:
-    """Returns a random hex color code."""
-    return "#" + "".join(random.choice("89ABCDEF") for _ in range(6))
+    if submitted:
+        if not worksheet_func or not group_column:
+            st.warning("Please make sure you are logged in and have filled in all fields.", icon="⚠️")
+        else:
+            components.stage_status(
+                stages=[
+                    {
+                        "name": "Retrieving worksheet",
+                        "func": components.return_stage_context("worksheet")(worksheet_func),
+                    },
+                    {
+                        "name": "Data extraction",
+                        "func": components.return_stage_context("df")(utils.get_data_from_worksheet),
+                    },
+                    {
+                        "name": "Data grouping and color generation",
+                        "func": generate_color_groups,
+                    },
+                    {"name": "Range generation", "func": generate_color_ranges},
+                    {"name": "Applying formatting", "func": apply_formatting},
+                ],
+                context={"group_column": group_column, "columns": [group_column]},
+            )
 
 
-def generate_color_groups(df: pd.DataFrame) -> dict[str, list[int]]:
+@components.return_stage_context("color_groups")
+def generate_color_groups(df: pd.DataFrame, group_column: str) -> dict[str, list[int]]:
     """Groups data and generates unique colors for each group.
 
     Args:
         df (pd.DataFrame): The DataFrame containing the data to be grouped.
+        group_column (str): The name of the column to group by.
 
     Returns:
         dict[str, list[int]]: A dictionary where keys are unique colors and values are lists of row indices.
@@ -67,11 +71,10 @@ def generate_color_groups(df: pd.DataFrame) -> dict[str, list[int]]:
     """
     unique_colors = set()
     group_colors = {}
-    group_column: str = st.session_state["group_column"]
 
     for group in df[group_column].unique():
         while True:
-            color = get_random_color()
+            color = "#" + "".join(random.choice("89ABCDEF") for _ in range(6))
             if color not in unique_colors:
                 unique_colors.add(color)
                 group_colors[group] = color
@@ -87,6 +90,7 @@ def generate_color_groups(df: pd.DataFrame) -> dict[str, list[int]]:
     return color_groups
 
 
+@components.return_stage_context("color_ranges")
 def generate_color_ranges(color_groups: dict[str, list[int]]) -> list[tuple[str, gspread_formatting.CellFormat]]:
     """Generates color ranges for batch updating in Google Sheets.
 
@@ -132,78 +136,5 @@ def apply_formatting(
         batch.format_cell_ranges(worksheet, color_ranges)  # pylint: disable=E1101
 
 
-@st.dialog("Example of result")
-def show_example() -> None:
-    """Shows example of result."""
-    st.write("This is an example of how the rows will be highlighted based on the values in `Metric` column.")
-    st.image("src/images/example_gsheet_highlight_rows.png")
-
-
-@st.dialog("How to get Google Sheets credentials")
-def show_credentials_info() -> None:
-    """Shows information on how to get credentials."""
-    st.write("To get the Google Sheets credentials, follow these steps:")
-    st.write(
-        "1. Go to the [Google Cloud Console](https://console.cloud.google.com/).\n"
-        "2. Create a new project or select an existing one.\n"
-        "3. Enable the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com) "
-        "for your project.\n"
-        "4. Go to the [Credentials page](https://console.cloud.google.com/apis/credentials) "
-        "and create service account credentials.\n"
-        "5. Download the JSON file and upload it here."
-    )
-    st.write(
-        "For more detailed instructions, see "
-        "[Google Cloud documentation](https://cloud.google.com/iam/docs/service-accounts-create)."
-    )
-
-
 if __name__ == "__main__":
-    st.title("🎨 Google Sheets - Highlight Rows")
-    st.write(
-        "This tool allows you to highlight rows in a Google Sheets document based on a specific column's values. "
-        "You can use this to visually group data in your spreadsheet."
-    )
-    st.write("Please note that the colors are generated randomly, but each group will have its own unique color.")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.button("Example of result", icon="🖼", on_click=show_example, use_container_width=True)
-    with col2:
-        st.button(
-            "How to get Google Sheets credentials", icon="🔑", on_click=show_credentials_info, use_container_width=True
-        )
-
-    with st.form(key="gsheet_highlight_rows", border=True):
-        st.file_uploader(
-            "Upload your Google Sheets JSON credentials",
-            help="Your service account JSON file. If you don't have it, see the instructions above.",
-            type=["json"],
-            key="credentials_file",
-        )
-        st.text_input(
-            "Document URL",
-            help="The URL of the Google Sheets document you want to format. Make sure you have edit access.",
-            key="document_url",
-        )
-        st.text_input(
-            "Worksheet name",
-            help="The name of the worksheet you want to format. This is the tab name at the bottom of the sheet.",
-            key="worksheet_name",
-        )
-        st.text_input(
-            "Group column",
-            help="The name of the column you want to group by. This column will determine the colors of the rows.",
-            key="group_column",
-        )
-        submitted = st.form_submit_button("Format", type="primary")
-
-    if submitted:
-        if (
-            not st.session_state["credentials_file"]
-            or not st.session_state["document_url"]
-            or not st.session_state["worksheet_name"]
-            or not st.session_state["group_column"]
-        ):
-            st.warning("Please fill in all fields.", icon="⚠️")
-        else:
-            format_sheet()
+    main()
