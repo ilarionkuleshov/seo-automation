@@ -29,7 +29,7 @@
      showguides="false"
      height="500px"
      inkscape:zoom="0.69664703"
-     inkscape:cx="576.33203"
+     inkscape:cx="575.61431"
      inkscape:cy="350.24911"
      inkscape:window-width="1920"
      inkscape:window-height="939"
@@ -112,7 +112,7 @@
        clip-path="url(#clipPath132)"
        transform="translate(0,26.834612)" />
     <rect
-       style="fill:#00ff00;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       style="fill:#00ff00;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke;fill-opacity:0.5"
        id="rect40"
        width="89.958336"
        height="92.604164"
