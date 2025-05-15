@@ -19,7 +19,10 @@ def main() -> None:
         "You can use this to visually group data in your spreadsheet."
     )
     st.write("Please note that the colors are generated randomly, but each group will have its own unique color.")
-    st.button("Example of result", icon="🖼", on_click=show_example, use_container_width=True)
+    components.example_image(
+        "This is an example of how the rows will be highlighted based on the values in `Metric` column.",
+        "src/images/example_gsheet_highlight_rows.png",
+    )
 
     with st.form(key="gsheet_highlight_rows"):
         worksheet_func = components.gsheet_selector()
@@ -131,13 +134,6 @@ def apply_formatting(
     """
     with gspread_formatting.batch_updater(worksheet.spreadsheet) as batch:
         batch.format_cell_ranges(worksheet, color_ranges)  # pylint: disable=E1101
-
-
-@st.dialog("Example of result")
-def show_example() -> None:
-    """Shows example of result."""
-    st.write("This is an example of how the rows will be highlighted based on the values in `Metric` column.")
-    st.image("src/images/example_gsheet_highlight_rows.png")
 
 
 if __name__ == "__main__":
