@@ -1,2 +1,4 @@
 markdown: kramdown
 theme: minima
+title: SEO Automation
+url: "https://seo-automation.streamlit.app/"

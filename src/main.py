@@ -43,7 +43,7 @@ def main() -> None:
                 st.write("You are logged in as", user["email"])
                 st.button("Logout", icon="🚫", on_click=auth.logout, use_container_width=True)
         else:
-            st.button("Login", icon="🔑", on_click=auth.login, use_container_width=True)
+            st.button("Login with Google", icon="🔑", on_click=auth.login, use_container_width=True)
     st.session_state["user"] = user
     page.run()
 
