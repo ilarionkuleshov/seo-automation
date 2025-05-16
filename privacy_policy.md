@@ -1,5 +1,4 @@
 # Privacy Policy
-
 Effective Date: 2025-05-16
 
 This privacy policy explains how the application "SEO Automation" (https://seo-automation.streamlit.app/) uses and protects your data when you use Google OAuth2 to log in and work with your Google Sheets.
@@ -22,13 +21,9 @@ Name and email are only used to display your account info within the app interfa
 Refresh token is used to request short-lived access tokens from Google, enabling the app to read and edit your selected Google Sheets. The refresh token is valid for 7 days. After that, you will need to log in again.
 
 ## Data Storage and Security
-We do not store any of your data on our servers. No database or external storage is used.
+We do not store any of your data on our servers. No database or external storage is used. All data retrieved during authentication is stored only in your browser's cookies and remains on your device.
 
-All data retrieved during authentication is stored only in your browser's cookies and remains on your device.
-
-The cookies are securely encrypted using a secret key that is stored safely on the server (not in the app's source code).
-
-These cookies are bound to the domain https://seo-automation.streamlit.app/ and cannot be accessed by any other site or app.
+The cookies are securely encrypted using a secret key that is stored safely on the server (not in the app's source code). These cookies are bound to the domain https://seo-automation.streamlit.app/ and cannot be accessed by any other site or app.
 
 Once you close your browser tab, the app does not retain any access to your data.
 
@@ -44,4 +39,4 @@ Our project is fully open-source. You can view the source code here:
 https://github.com/ilarionkuleshov/seo-automation
 
 ## Contact
-If you have any questions or concerns about this privacy policy, feel free to contact us at: [ilarion.kuleshov@gmail.com]
+If you have any questions or concerns about this privacy policy, feel free to contact us at: ilarion.kuleshov@gmail.com
