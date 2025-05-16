@@ -44,6 +44,13 @@ def main() -> None:
                 st.button("Logout", icon="🚫", on_click=auth.logout, use_container_width=True)
         else:
             st.button("Login with Google", icon="🔑", on_click=auth.login, use_container_width=True)
+        st.link_button(
+            "Privacy Policy",
+            "https://ilarionkuleshov.github.io/seo-automation/privacy-policy",
+            use_container_width=True,
+            icon="🛡️",
+        )
+
     st.session_state["user"] = user
     page.run()
 
