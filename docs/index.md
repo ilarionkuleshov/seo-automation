@@ -7,4 +7,4 @@ Welcome to SEO Automation!
 
 🚀 [Open the App](https://seo-automation.streamlit.app)  
 💻 [View on GitHub](https://github.com/ilarionkuleshov/seo-automation)  
-🛡️ [Privacy Policy](/privacy-policy)
+🛡️ [Privacy Policy](privacy-policy)
