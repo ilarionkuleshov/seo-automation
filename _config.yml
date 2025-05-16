@@ -1,3 +1,5 @@
 markdown: kramdown
 theme: minima
-name: SEO Automation
+
+site:
+  name: SEO Automation

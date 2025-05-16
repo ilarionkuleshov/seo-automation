@@ -1,6 +1,5 @@
 ---
 layout: default
-title: SEO Automation
 ---
 
 Welcome to SEO Automation!
