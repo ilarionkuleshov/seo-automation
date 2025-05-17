@@ -46,10 +46,14 @@ def get_user() -> dict[str, str] | None:
             return None
 
         user["refresh_token"] = token["refresh_token"]
+        if "refresh_token_expires_in" in token:
+            max_age = token["refresh_token_expires_in"]
+        else:
+            max_age = 3600 * 24 * 7
         CookieController().set(
             name="user",
             value=encrypt_user(user),
-            max_age=token["refresh_token_expires_in"] - 200,
+            max_age=max_age - 200,
             secure=True,
         )
         return user
